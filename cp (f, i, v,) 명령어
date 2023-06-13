@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <getopt.h>
+#include <fcntl.h>
+#include <ctype.h>
+int main(int argc, char *argv[]) {
+    int option;
+    int force = 0;
+    int interactive = 0;
+    int verbose = 0;
+
+    while ((option = getopt(argc, argv, "fiv")) != -1) {
+        switch (option) {
+            case 'f':
+                force = 1;
+                break;
+            case 'i':
+                interactive = 1;
+                break;
+            case 'v':
+                verbose = 1;
+                break;
+            case '?':
+                if (optopt == 'f' || optopt == 'i' || optopt == 'v') {
+                    fprintf(stderr, "Option -%c requires no argument.\n", optopt);
+                }
+                else if (isprint(optopt)) {
+                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+                }
+                else {
+                    fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+                }
+                return 1;
+		default:
+                abort();
+        }
+    }
+
+    // Process remaining non-option arguments (source and destination files)
+    if (argc - optind != 2) {
+        fprintf(stderr, "Usage: %s [-f] [-i] [-v] <source> <destination>\n", argv[0]);
+        return 1;
+    }
+
+    char *source = argv[optind];
+    char *destination = argv[optind + 1];
+
+    if (force || interactive) {
+        if (interactive) {
+            printf("cp: overwrite '%s'?", destination);
+            char response;
+            scanf("%c", &response);
+            if (response != 'y' && response != 'Y') {
+                printf("cp: not overwritten\n");
+                return 0;
+            }
+        }
+
+        int fdSource = open(source, O_RDONLY);
+        if (fdSource == -1) {
+            fprintf(stderr, "Failed to open source file: %s\n", source);
+            return 1;
+        }
+
+        int fdDest = open(destination, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+        if (fdDest == -1) {
+ fprintf(stderr, "Failed to open destination file: %s\n", destination);
+            return 1;
+        }
+
+        char buffer[4096];
+        ssize_t bytesRead;
+        while ((bytesRead = read(fdSource, buffer, sizeof(buffer))) > 0) {
+            if (write(fdDest, buffer, bytesRead) != bytesRead) {                fprintf(stderr, "Failed to write to destination file: %s\n", destination);
+                return 1;
+            }
+        }
+
+        close(fdSource);
+        close(fdDest);
+
+        if (verbose) {
+            printf("'%s' -> '%s'\n", source, destination);
+        }
+    }
+    else {
+        FILE *fileSource = fopen(source, "r");
+        if (fileSource == NULL) {
+            fprintf(stderr, "Failed to open source file: %s\n", source);
+            return 1;
+        }
+
+        FILE *fileDest = fopen(destination, "w");
+        if (fileDest == NULL) {
+            fprintf(stderr, "Failed to open destination file: %s\n", destination);
+            return 1;
+        }
+
+        int ch;
+        while ((ch = fgetc(fileSource)) != EOF) {
+            fputc(ch, fileDest);
+        }
+
+        fclose(fileSource);
+        fclose(fileDest);
+
+        if (verbose) {
+            printf("'%s' -> '%s'\n", source, destination);
+        }
+    }
+
+    return 0;
+}
