@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <utime.h>
+#include <ctype.h>
+int main(int argc, char *argv[]) {
+    int c;
+    int modify = 0;
+
+    while ((c = getopt(argc, argv, "m")) != -1) {
+        switch (c) {
+            case 'm':
+                modify = 1;
+                break;
+            case '?':
+                if (optopt == 'm')
+                    fprintf(stderr, "Option -%c requires no argument.\n", optopt);
+                else
+                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+                return 1;
+            default:
+                abort();
+        }
+    }
+
+    // getopt가 분석한 옵션들을 제외한 나머지 인자들을 생성하거>나 수정합니다.
+    for (int i = optind; i < argc; ++i) {
+        struct stat st;
+        if (stat(argv[i], &st) == 0) {
+            // 파일이 이미 존재하는 경우
+            if (modify) {
+                // -m 옵션이 지정된 경우 파일의 수정 시간을 현재 시간으로 변경합니다.
+                struct utimbuf ut;
+                 ut.actime = st.st_atime;
+                ut.modtime = time(NULL);
+                if (utime(argv[i], &ut) == 0)
+                    printf("Modified file: %s\n", argv[i]);
+                else
+                    printf("Failed to modify file: %s\n", argv[i]);
+            }
+        } else {
+            // 파일이 존재하지 않는 경우
+            FILE *file = fopen(argv[i], "w");
+            if (file != NULL) {
+                // 파일을 생성합니다.
+                fclose(file);
+                printf("Created file: %s\n", argv[i]);
+            } else {
+                printf("Failed to create file: %s\n", argv[i]);
+            }
+        }
+    }
+
+    return 0;
+}
