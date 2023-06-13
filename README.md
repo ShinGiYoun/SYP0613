@@ -48,7 +48,23 @@
 ![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/6a67635f-9e3d-4bda-a955-c15ccbf5ab02)   
 24.touch -m   
 ![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/a768e52c-b2b6-4777-a580-2a123d363208)   
-25.
+25.ls   
+![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/e27cc322-3cdb-4105-b0b5-d8b64e820fcc)   
+26.ls -a   
+![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/8b33fa7c-f841-4e32-85ae-39f8f6fe8113)   
+27.ls -i   
+![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/d516620a-7c7c-4e22-8851-b3af477498bc)   
+28.tail   
+![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/9705daa6-e661-4346-a2b4-fd552b98c14b)   
+29.tail -n   
+![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/355127f8-bdbf-4d06-ac6b-1f958638e6a2)   
+30.more -n   
+![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/8dcaf734-5ddf-405f-9a57-aa7eb82ff242)   
+
+
+
+
+
 
 
 
