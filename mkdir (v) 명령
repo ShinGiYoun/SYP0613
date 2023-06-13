@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <getopt.h>
+#include <sys/stat.h>
+#include <ctype.h>
+int main(int argc, char *argv[]) {
+    int option;
+    int verbose = 0; // 기본적으로는 verbose 모드 비활성화
+
+    while ((option = getopt(argc, argv, "v")) != -1) {
+        switch (option) {
+            case 'v':
+                verbose = 1; // verbose 모드 활성화
+                break;
+            case '?':
+                if (optopt == 'v') {
+                    fprintf(stderr, "Option -%c requires no argument.\n", optopt);
+                }
+                else if (isprint(optopt)) {
+                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+                }
+                else {
+                    fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+                }
+                return 1;
+            default:
+                abort();
+        }
+    }
+
+    // Process remaining non-option arguments (directory names)
+    int dirIndex = optind;
+    for (int i = dirIndex; i < argc; i++) {
+        if (mkdir(argv[i], 0777) != 0) {
+        
+            perror("Failed to create directory");
+        }
+        else if (verbose) {
+            printf("Created directory: %s\n", argv[i]);
+        }
+    }
+
+    return 0;
+}
