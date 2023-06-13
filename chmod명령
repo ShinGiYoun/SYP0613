@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <getopt.h>
+#include <sys/stat.h>
+
+int main(int argc, char *argv[]) {
+    int option;
+    mode_t permissions = 0;
+    int recursive = 0;
+
+    while ((option = getopt(argc, argv, "R")) != -1) {
+        switch (option) {
+            case 'R':
+                recursive = 1;
+                break;
+            case '?':
+                if (optopt == 'R') {
+                    fprintf(stderr, "Option -%c requires no argument.\n", optopt);
+                }
+                else if (isprint(optopt)) {
+                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+                }
+                else {
+                    fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+                }
+                return 1;
+            default:
+                abort();
+        }
+    }
+
+    // Process remaining non-option arguments (permissions and files/directories)
+    int numArgs = argc - optind;
+    if (numArgs < 2) {
+        fprintf(stderr, "Usage: %s [-R] <permissions> <file1> [<file2>...]\n", argv[0]);
+        return 1;
+    }
+
+    // Parse permissions string
+    if (sscanf(argv[optind], "%o", &permissions) != 1) {
+        fprintf(stderr, "Invalid permissions: %s\n", argv[optind]);
+        return 1;
+    }
+
+    // Apply permissions to files/directories
+    for (int i = optind + 1; i < argc; i++) {
+        if (recursive) {
+            if (chmod(argv[i], permissions) != 0) {
+                fprintf(stderr, "Failed to change permissions of: %s\n", argv[i]);
+            }
+        }
+        else {
+            struct stat st;
+            if (stat(argv[i], &st) == 0) {
+                mode_t newPermissions = (st.st_mode & ~0777) | permissions;
+                if (chmod(argv[i], newPermissions) != 0) {
+                    fprintf(stderr, "Failed to change permissions of: %s\n", argv[i]);
+                }
+            }
+            else {
+                fprintf(stderr, "Failed to get file/directory information: %s\n", argv[i]);
+            }
+        }
+    }
+
+    return 0;
+}
