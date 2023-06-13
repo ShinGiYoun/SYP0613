@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <getopt.h>
+#include <ctype.h>
+int main(int argc, char *argv[]) {
+    int option;
+    int lines = 10; // 기본적으로 10줄만 출력
+
+    while ((option = getopt(argc, argv, "n:")) != -1) {
+        switch (option) {
+            case 'n':
+                lines = atoi(optarg);
+                break;
+            case '?':
+                if (optopt == 'n') {
+                    fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+                }
+                else if (isprint(optopt)) {
+                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+                }
+                else {
+                    fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+                }
+                return 1;
+            default:
+                abort();
+        }
+    }
+
+    // Process remaining non-option arguments (file names)
+    int fileIndex = optind;
+    for (int i = fileIndex; i < argc; i++) {
+        FILE *file = fopen(argv[i], "r");
+        if (file == NULL) {
+         fprintf(stderr, "Failed to open file: %s\n", argv[i]);
+            continue;
+        }
+
+        printf("==> %s <==\n", argv[i]);
+
+        int lineCount = 0;
+        int ch;
+        while ((ch = fgetc(file)) != EOF) {
+            putchar(ch);
+            if (ch == '\n') {
+                lineCount++;
+                if (lineCount >= lines) {
+                    break;
+                }
+            }
+        }
+
+        fclose(file);
+        printf("\n");
+    }
+
+    return 0;
+}
