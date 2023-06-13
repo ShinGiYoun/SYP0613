@@ -7,8 +7,7 @@
 4.cat -n   
 ![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/7dea6caa-de8d-4448-92eb-5550c5c4a339)   
 5.chmod   
-![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/0d1fb851-63e4-433f-a40e-6328406af8df)   
-![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/f3e54c23-f476-408c-83b5-197e34d917f1)   
+![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/e0706c3a-aab6-4be0-bae0-5a36d89b1907)   
 6.clear   
 ![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/c3b88ef3-719c-457d-8fd7-b930e1bd6a16)   
 ![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/772cf6d0-ee39-4e2e-bae0-c455c317c06d)   
