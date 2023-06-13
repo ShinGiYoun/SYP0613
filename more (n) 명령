@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <getopt.h>
+
+#define MAX_LINE_LENGTH 1024
+
+void display_file(const char *filename, int num_lines) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("fopen");
+        exit(EXIT_FAILURE);
+    }
+
+    char line[MAX_LINE_LENGTH];
+    int line_count = 0;
+
+    while (fgets(line, MAX_LINE_LENGTH, file) != NULL) {
+        fputs(line, stdout);
+        line_count++;
+
+        if (line_count == num_lines) {
+            int c = getchar();
+            if (c == 'q') {
+                break;
+            }
+            line_count = 0;
+        }
+        }
+
+    fclose(file);
+}
+
+int main(int argc, char *argv[]) {
+    int opt;
+    int num_lines = 10; // Default number of lines per page
+
+    while ((opt = getopt(argc, argv, "n:")) != -1) {
+        switch (opt) {
+            case 'n':
+                num_lines = atoi(optarg);
+                break;
+            default:
+                fprintf(stderr, "Usage: %s [-n NUM_LINES] [FILE]\n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
+    }
+
+    // Process the remaining arguments after options
+    if (optind < argc) {
+        for (int i = optind; i < argc; i++) {
+            display_file(argv[i], num_lines);
+        }
+    } else {
+        display_file("stdin", num_lines);
+    }
+     return 0;
+}
+           
