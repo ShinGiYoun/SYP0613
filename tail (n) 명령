@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#define DEFAULT_N_LINES 10
+
+void tail(FILE *file, int n_lines) {
+    char **lines = (char **)malloc(n_lines * sizeof(char *));
+    if (lines == NULL) {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+
+    int line_count = 0;
+    int curr_line = 0;
+
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    ssize_t bytes_read;
+
+    while ((bytes_read = getline(&buffer, &buffer_size, file)) != -1) {
+        if (lines[curr_line] != NULL) {
+            free(lines[curr_line]);
+        }
+
+        lines[curr_line] = buffer;
+        buffer = NULL;
+        buffer_size = 0;
+        curr_line = (curr_line + 1) % n_lines;
+        line_count++;
+    }
+
+    if (bytes_read == -1 && ferror(file)) {
+        perror("getline");
+        exit(EXIT_FAILURE);
+    }
+
+    int start_line = line_count > n_lines ? (curr_line + 1) % n_lines : 0;
+    int count = line_count > n_lines ? n_lines : line_count;
+
+    for (int i = 0; i < count; i++) {
+        int line_index = (start_line + i) % n_lines;
+        printf("%s", lines[line_index]);
+    }
+
+    for (int i = 0; i < n_lines; i++) {
+        free(lines[i]);
+    }
+    free(lines);
+}
+
+int main(int argc, char *argv[]) {
+    int opt;
+    int n_lines = DEFAULT_N_LINES;
+
+    while ((opt = getopt(argc, argv, "n:")) != -1) {
+    switch (opt) {
+            case 'n':
+                n_lines = atoi(optarg);
+                if (n_lines <= 0) {
+                    fprintf(stderr, "Invalid number of lines: %s\n", optarg);
+                    exit(EXIT_FAILURE);
+                }
+                break;
+            default:
+                fprintf(stderr, "Usage: %s [-n num_lines] [file]\n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
+    }
+
+    FILE *file;
+    if (optind < argc) {
+        file = fopen(argv[optind], "r");
+        if (file == NULL) {
+            perror("fopen");
+            exit(EXIT_FAILURE);
+        }
+    } else {
+        file = stdin;
+    }
+
+    tail(file, n_lines);
+     if (file != stdin) {
+        fclose(file);
+    }
+
+    return 0;
+}
