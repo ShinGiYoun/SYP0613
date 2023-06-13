@@ -26,7 +26,23 @@
 ![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/55da0063-afb5-403d-a261-cfa2152245eb)   
 13.head -n   
 ![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/f1948483-1e36-4add-9fba-1dc3bc4b9240)   
-14.
+14.mkdir   
+![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/f810da34-9aed-43b8-82d5-00b809563e19)   
+15.mkdir -v   
+![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/bb3f5109-67e7-4364-a725-0d0b5d0b8363)   
+16.mv   
+![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/98ad195b-6cfa-4995-862e-1cbfd9322c9c)   
+17.mv -b   
+![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/8e81b8d9-a232-47f8-95e7-7adc29c40a0b)   
+18.mv -f   
+![image](https://github.com/ShinGiYoun/SYP0613/assets/122343846/19fea3bd-74c5-4cc6-9e52-a7bc314e0215)   
+19.mv -i   
+
+
+
+
+
+
 
 
  
