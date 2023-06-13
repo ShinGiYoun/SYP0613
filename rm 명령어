@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <ctype.h>
+int main(int argc, char *argv[]) {
+    int c;
+    int interactive = 0;
+    int verbose = 0;
+
+    while ((c = getopt(argc, argv, "iv")) != -1) {
+        switch (c) {
+            case 'i':
+                interactive = 1;
+                break;
+            case 'v':
+                verbose = 1;
+                break;
+            case '?':
+                if (optopt == 'i' || optopt == 'v')
+                    fprintf(stderr, "Option -%c requires no argument.\n", optopt);
+                else
+                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+                return 1;
+            default:
+                abort();
+        }
+    }
+
+    // getopt가 분석한 옵션들을 제외한 나머지 인자들을 출력합니>다.
+    for (int i = optind; i < argc; ++i) {
+        if (interactive) {
+            char response;
+            printf("Remove file '%s'? (y/n): ", argv[i]);
+            scanf(" %c", &response);
+            if (response == 'y' || response == 'Y') {
+            if (remove(argv[i]) == 0 && verbose)
+                    printf("Removed file: %s\n", argv[i]);
+                else if (verbose)
+                    printf("Failed to remove file: %s\n", argv[i]);
+            }
+        } else {
+            if (remove(argv[i]) == 0 && verbose)
+                printf("Removed file: %s\n", argv[i]);
+            else if (verbose)
+                printf("Failed to remove file: %s\n", argv[i]);
+        }
+    }
+
+    return 0;
+}
